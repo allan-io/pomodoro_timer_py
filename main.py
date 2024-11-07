@@ -1,5 +1,8 @@
 from tkinter import *
 import math
+from playsound import playsound
+import threading
+
 from token import GREATER
 
 # ---------------------------- CONSTANTS ------------------------------- #
@@ -9,10 +12,21 @@ GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 WORK_MIN = 25
-SHORT_BREAK_MIN = 5
+SHORT_BREAK_MIN = 10
 LONG_BREAK_MIN = 20
 reps = 0
 timer = None
+
+# ---------------------------- PLAY SOUND ------------------------------- #
+
+def play_sound():
+    # This will run in a separate thread
+    playsound('./alarm.mp3')  # Custom alarm sound
+
+def start_playing_sound():
+    # Start a new thread to play the sound
+    sound_thread = threading.Thread(target=play_sound)
+    sound_thread.start()
 
 # ---------------------------- TIMER RESET ------------------------------- # 
 def reset_timer():
@@ -35,20 +49,9 @@ def start_timer():
     elif reps % 2 == 1:
         count_down(WORK_MIN * 60)
         title_label.config(text="Work", fg=GREEN)
-        # if reps == 1:
-        #     check_marks.config(text="✔️")
-        # if reps == 3:
-        #     check_marks.config(text="✔️✔️")
-        # if reps == 5:
-        #     check_marks.config(text="✔️✔️✔️")
     else:
         count_down(SHORT_BREAK_MIN * 60)
         title_label.config(text="Break", fg=PINK)
-
-
-
-        
-
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
 def count_down(time_left):
@@ -63,6 +66,10 @@ def count_down(time_left):
 
         timer = window.after(1000, count_down, time_left -1)
     else:
+        window.attributes("-topmost", True)
+        window.lift()
+        window.focus_force()
+        start_playing_sound()
         start_timer()
         marks = ""
         work_session = math.floor((reps / 2))
