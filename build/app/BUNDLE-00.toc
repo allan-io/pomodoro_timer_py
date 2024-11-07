@@ -1,0 +1,3 @@
+([('app',
+   '/Users/moreto/Desktop/coding_projects/python_projects/pomodoro-start/dist/app',
+   'EXECUTABLE')],)
